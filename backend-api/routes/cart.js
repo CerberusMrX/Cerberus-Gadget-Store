@@ -1,0 +1,10 @@
+const router = require('express').Router();
+const auth   = require('../middleware/auth');
+const role   = require('../middleware/role');
+const ctrl   = require('../controllers/cartController');
+router.get('/',           auth, role('customer'), ctrl.getCart);
+router.post('/add',       auth, role('customer'), ctrl.addToCart);
+router.put('/:itemId',    auth, role('customer'), ctrl.updateCartItem);
+router.delete('/clear',   auth, role('customer'), ctrl.clearCart);
+router.delete('/:itemId', auth, role('customer'), ctrl.removeFromCart);
+module.exports = router;

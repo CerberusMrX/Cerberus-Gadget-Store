@@ -1,0 +1,176 @@
+Table users {
+  user_id number [pk]
+  email varchar2 [unique, not null]
+  password_hash varchar2 [not null]
+  role varchar2 [not null]
+  is_active number [default: 1]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table customers {
+  customer_id number [pk]
+  user_id number [unique, not null]
+  first_name varchar2 [not null]
+  last_name varchar2 [not null]
+  phone varchar2
+  address varchar2
+  city varchar2
+  country varchar2
+  created_at timestamp
+}
+Ref: customers.user_id - users.user_id
+
+Table sellers {
+  seller_id number [pk]
+  user_id number [unique, not null]
+  store_name varchar2 [not null]
+  description varchar2
+  phone varchar2
+  address varchar2
+  is_verified number [default: 0]
+  commission_pct number [default: 10]
+  created_at timestamp
+}
+Ref: sellers.user_id - users.user_id
+
+Table admins {
+  admin_id number [pk]
+  user_id number [unique, not null]
+  first_name varchar2 [not null]
+  last_name varchar2 [not null]
+  created_at timestamp
+}
+Ref: admins.user_id - users.user_id
+
+Table categories {
+  category_id number [pk]
+  name varchar2 [unique, not null]
+  description varchar2
+  image_url varchar2
+  is_active number [default: 1]
+}
+
+Table products {
+  product_id number [pk]
+  seller_id number [not null]
+  category_id number [not null]
+  name varchar2 [not null]
+  description clob
+  price number [not null]
+  discount_pct number [default: 0]
+  image_url varchar2
+  brand varchar2
+  model varchar2
+  is_active number [default: 1]
+  rating_avg number [default: 0]
+  rating_count number [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+Ref: products.seller_id > sellers.seller_id
+Ref: products.category_id > categories.category_id
+
+Table inventory {
+  inventory_id number [pk]
+  product_id number [unique, not null]
+  quantity number [not null, default: 0]
+  low_stock_threshold number [default: 5]
+  updated_at timestamp
+}
+Ref: inventory.product_id - products.product_id
+
+Table cart {
+  cart_id number [pk]
+  customer_id number [not null]
+  created_at timestamp
+}
+Ref: cart.customer_id > customers.customer_id
+
+Table cart_items {
+  cart_item_id number [pk]
+  cart_id number [not null]
+  product_id number [not null]
+  quantity number [not null]
+  added_at timestamp
+}
+Ref: cart_items.cart_id > cart.cart_id
+Ref: cart_items.product_id > products.product_id
+
+Table orders {
+  order_id number [pk]
+  customer_id number [not null]
+  status varchar2 [not null, default: 'pending']
+  total_amount number [not null]
+  shipping_address varchar2 [not null]
+  shipping_city varchar2
+  notes varchar2
+  created_at timestamp
+  updated_at timestamp
+}
+Ref: orders.customer_id > customers.customer_id
+
+Table order_items {
+  order_item_id number [pk]
+  order_id number [not null]
+  product_id number [not null]
+  quantity number [not null]
+  unit_price number [not null]
+  subtotal number
+}
+Ref: order_items.order_id > orders.order_id
+Ref: order_items.product_id > products.product_id
+
+Table payments {
+  payment_id number [pk]
+  order_id number [unique, not null]
+  amount number [not null]
+  method varchar2 [not null]
+  status varchar2 [not null, default: 'pending']
+  transaction_ref varchar2
+  paid_at timestamp
+  created_at timestamp
+}
+Ref: payments.order_id - orders.order_id
+
+Table payment_audit_log {
+  log_id number [pk]
+  payment_id number
+  old_status varchar2
+  new_status varchar2
+  changed_at timestamp
+  changed_by varchar2
+}
+
+Table deliveries {
+  delivery_id number [pk]
+  order_id number [unique, not null]
+  tracking_no varchar2
+  carrier varchar2
+  status varchar2
+  estimated_date date
+  delivered_at timestamp
+  created_at timestamp
+}
+Ref: deliveries.order_id - orders.order_id
+
+Table reviews {
+  review_id number [pk]
+  product_id number [not null]
+  customer_id number [not null]
+  rating number [not null]
+  title varchar2
+  body varchar2
+  created_at timestamp
+}
+Ref: reviews.product_id > products.product_id
+Ref: reviews.customer_id > customers.customer_id
+
+Table wishlist {
+  wishlist_id number [pk]
+  customer_id number [not null]
+  product_id number [not null]
+  added_at timestamp
+}
+Ref: wishlist.customer_id > customers.customer_id
+Ref: wishlist.product_id > products.product_id

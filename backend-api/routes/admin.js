@@ -1,0 +1,11 @@
+const router = require('express').Router();
+const auth   = require('../middleware/auth');
+const role   = require('../middleware/role');
+const ctrl   = require('../controllers/adminController');
+router.get('/dashboard',         auth, role('admin'), ctrl.getDashboard);
+router.get('/users',             auth, role('admin'), ctrl.getUsers);
+router.put('/users/:id/toggle',  auth, role('admin'), ctrl.toggleUser);
+router.get('/failed-payments',   auth, role('admin'), ctrl.getFailedPayments);
+router.get('/low-stock',         auth, role('admin'), ctrl.getLowStock);
+router.get('/activity-logs',     auth, role('admin'), ctrl.getActivityLogs);
+module.exports = router;

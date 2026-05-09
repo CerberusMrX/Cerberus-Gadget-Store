@@ -1,0 +1,10 @@
+const router = require('express').Router();
+const auth   = require('../middleware/auth');
+const role   = require('../middleware/role');
+const ctrl   = require('../controllers/orderController');
+router.post('/',              auth, role('customer'), ctrl.placeOrder);
+router.get('/',               auth, role('customer'), ctrl.getMyOrders);
+router.get('/all',            auth, role('admin'),    ctrl.getAllOrders);
+router.get('/:id',            auth,                   ctrl.getOrder);
+router.put('/:id/cancel',     auth, role('customer'), ctrl.cancelOrder);
+module.exports = router;
